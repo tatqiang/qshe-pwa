@@ -8,7 +8,7 @@ import {
   Button,
   Paper,
   MenuItem,
-  Grid // FIX: กลับมา import Grid ตัวดั้งเดิม
+  Grid // <<<<<<< กลับมา import Grid ตัวดั้งเดิมที่เสถียร
 } from '@mui/material';
 
 const IncidentReportPage: React.FC = () => {
@@ -22,10 +22,13 @@ const IncidentReportPage: React.FC = () => {
       </Typography>
 
       <Box component="form" noValidate autoComplete="off" sx={{ mt: 3 }}>
-        {/* FIX: ใช้ Grid container เหมือนเดิม */}
+        {/* ใช้ Grid container เหมือนเดิม */}
         <Grid container spacing={3}>
 
-          {/* FIX: กลับมาใช้ синтаксис ของ Grid v1 คือต้องมี 'item' prop */}
+          {/* !!!! จุดแก้ไขที่สำคัญที่สุด !!!!
+            เราจะกลับมาใช้ синтаксис แบบดั้งเดิม คือการใส่ prop 'item' เข้าไป
+            เพื่อให้เข้ากับ Grid ที่เรา import เข้ามา
+          */}
           <Grid item xs={12} sm={6}>
             <TextField
               select
