@@ -51,9 +51,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
           <List>
+            {/* FIX: เพิ่ม onClick={handleDrawerToggle} ให้ทุกเมนู */}
             <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
               <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton onClick={handleDrawerToggle}>
                   <ListItemIcon><DashboardIcon /></ListItemIcon>
                   <ListItemText primary="Dashboard" />
                 </ListItemButton>
@@ -61,7 +62,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </Link>
             <Link to="/incident-report" style={{ textDecoration: 'none', color: 'inherit' }}>
               <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton onClick={handleDrawerToggle}>
                   <ListItemIcon><SummarizeIcon /></ListItemIcon>
                   <ListItemText primary="Incident Report" />
                 </ListItemButton>

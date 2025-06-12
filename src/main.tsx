@@ -9,6 +9,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import DashboardPage from './pages/DashboardPage.tsx';
 import IncidentReportPage from './pages/IncidentReportPage.tsx';
 
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
 // 2. Define your routes
 const router = createBrowserRouter([
   {

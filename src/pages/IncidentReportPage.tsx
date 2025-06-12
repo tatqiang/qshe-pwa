@@ -9,24 +9,31 @@ import {
   Paper,
   MenuItem,
 } from '@mui/material';
+// 1. Import the new DateTimePicker component
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+// Import Dayjs for type definition
+import { Dayjs } from 'dayjs';
 import { supabase } from '../supabaseClient';
 
+// 2. Update the interface to use Dayjs
 interface IFormData {
   incidentType: string;
   location: string;
   description: string;
-  incidentDateTime: string;
+  incidentDateTime: Dayjs | null;
 }
 
 const IncidentReportPage: React.FC = () => {
+  // 3. Update the initial state for incidentDateTime to null
   const [formData, setFormData] = useState<IFormData>({
     incidentType: '',
     location: '',
     description: '',
-    incidentDateTime: ''
+    incidentDateTime: null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // This function handles the standard text fields
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData(prevState => ({
@@ -34,16 +41,25 @@ const IncidentReportPage: React.FC = () => {
       [name]: value
     }));
   };
+  
+  // 4. This new function specifically handles the DateTimePicker's value
+  const handleDateTimeChange = (newValue: Dayjs | null) => {
+    setFormData(prevState => ({
+      ...prevState,
+      incidentDateTime: newValue
+    }));
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
 
+    // 5. Convert Dayjs object to a string format for Supabase
     const submissionData = {
       incident_type: formData.incidentType,
       location: formData.location,
       description: formData.description,
-      incident_date_time: formData.incidentDateTime,
+      incident_date_time: formData.incidentDateTime ? formData.incidentDateTime.toISOString() : null,
     };
 
     try {
@@ -51,17 +67,14 @@ const IncidentReportPage: React.FC = () => {
         .from('incidents')
         .insert([submissionData]);
 
-      if (error) {
-        throw error;
-      }
+      if (error) { throw error; }
 
       alert('Incident report submitted successfully!');
-      // เคลียร์ฟอร์มหลังจากส่งข้อมูลสำเร็จ
       setFormData({
         incidentType: '',
         location: '',
         description: '',
-        incidentDateTime: ''
+        incidentDateTime: null
       });
 
     } catch (error: any) {
@@ -86,13 +99,11 @@ const IncidentReportPage: React.FC = () => {
         autoComplete="off" 
         sx={{ 
           mt: 3,
-          '& .MuiTextField-root': { mb: 3 },
+          // This styles all TextFields AND the new DateTimePicker
+          '& > .MuiFormControl-root': { mb: 3 },
         }} 
         onSubmit={handleSubmit}
       >
-        {/* ======================================= */}
-        {/* โค้ดส่วนของฟอร์มที่หายไป อยู่ตรงนี้ครับ */}
-        {/* ======================================= */}
         <TextField
           select
           required
@@ -131,28 +142,26 @@ const IncidentReportPage: React.FC = () => {
           onChange={handleChange}
         />
         
-        <TextField
-          required
-          fullWidth
-          id="datetime-local"
-          name="incidentDateTime"
-          label="Date and Time of Incident"
-          type="datetime-local"
+        {/* 6. Replace the old TextField with the new DateTimePicker component */}
+        <DateTimePicker
+          label="Date and Time of Incident *"
           value={formData.incidentDateTime}
-          onChange={handleChange}
-          InputLabelProps={{ shrink: true }}
+          onChange={handleDateTimeChange}
+          sx={{ width: '100%' }}
         />
 
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          size="large"
-          sx={{ mt: 2 }}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Submitting...' : 'Submit Report'}
-        </Button>
+        <Box sx={{ textAlign: 'center' }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              sx={{ mt: 2 }}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit Report'}
+            </Button>
+        </Box>
       </Box>
     </Paper>
   );
