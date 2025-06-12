@@ -13,8 +13,7 @@ import {
 
 const IncidentReportPage: React.FC = () => {
   return (
-    // Paper provides a nice, clean container with a shadow
-    <Paper elevation={3} sx={{ p: 4 }}> 
+    <Paper elevation={3} sx={{ p: 4, maxWidth: 800, margin: 'auto' }}> 
       <Typography variant="h4" gutterBottom>
         New Incident Report
       </Typography>
@@ -22,20 +21,20 @@ const IncidentReportPage: React.FC = () => {
         Please fill out the details of the incident below.
       </Typography>
 
-      {/* Box is used as a form container */}
       <Box component="form" noValidate autoComplete="off" sx={{ mt: 3 }}>
+        {/* FIX 1: แก้ไข Grid container ไม่ต้องมี props พิเศษ */}
         <Grid container spacing={3}>
 
-          {/* Type of Incident (Dropdown) */}
-          <Grid item xs={12} sm={6}>
+          {/* FIX 2: ลบ prop 'item' ออกจาก Grid และใช้ xs, sm โดยตรง */}
+          <Grid xs={12} sm={6}>
             <TextField
               select
               required
               fullWidth
-              id="incident-type"
+              id="incident-type" // FIX 3: เพิ่ม ID ที่นี่
               name="incidentType"
               label="Type of Incident"
-              defaultValue="" // Default empty value
+              defaultValue=""
             >
               <MenuItem value="Injury">Injury</MenuItem>
               <MenuItem value="Near Miss">Near Miss</MenuItem>
@@ -44,36 +43,33 @@ const IncidentReportPage: React.FC = () => {
             </TextField>
           </Grid>
 
-          {/* Location of Incident (Text Field) */}
-          <Grid item xs={12} sm={6}>
+          <Grid xs={12} sm={6}>
             <TextField
               required
               fullWidth
-              id="location"
+              id="location" // FIX 3: เพิ่ม ID ที่นี่
               name="location"
               label="Location of Incident"
             />
           </Grid>
 
-          {/* Description (Multiline Text Field) */}
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <TextField
               required
               fullWidth
               multiline
               rows={4}
-              id="description"
+              id="description" // FIX 3: เพิ่ม ID ที่นี่
               name="description"
               label="Description of Incident"
             />
           </Grid>
           
-          {/* Date and Time (Date-Time Picker) */}
-          <Grid item xs={12} sm={6}>
+          <Grid xs={12} sm={6}>
             <TextField
               required
               fullWidth
-              id="datetime-local"
+              id="datetime-local" // FIX 3: เพิ่ม ID ที่นี่
               label="Date and Time of Incident"
               type="datetime-local"
               InputLabelProps={{
@@ -82,8 +78,8 @@ const IncidentReportPage: React.FC = () => {
             />
           </Grid>
 
-          {/* Submit Button */}
-          <Grid item xs={12}>
+          {/* Grid ตัวนี้ไม่ต้องมีขนาด เพราะ Button จะจัดตัวเอง */}
+          <Grid xs={12}>
             <Button
               type="submit"
               variant="contained"
