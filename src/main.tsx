@@ -1,25 +1,22 @@
-// src/main.tsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
-// 1. Import your new pages
 import DashboardPage from './pages/DashboardPage.tsx';
 import IncidentReportPage from './pages/IncidentReportPage.tsx';
 
+// These imports are already correct in your file
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
-// 2. Define your routes
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />, // App now acts as the layout for child routes
+    element: <App />,
     children: [
       {
-        index: true, // This makes it the default child route
+        index: true,
         element: <DashboardPage />,
       },
       {
@@ -32,7 +29,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    {/* 3. Provide the router to your app */}
-    <RouterProvider router={router} />
+    {/* FIX: Wrap RouterProvider with LocalizationProvider */}
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <RouterProvider router={router} />
+    </LocalizationProvider>
   </React.StrictMode>,
 )
