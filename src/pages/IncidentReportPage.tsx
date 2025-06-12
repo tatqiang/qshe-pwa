@@ -8,9 +8,8 @@ import {
   Button,
   Paper,
   MenuItem,
+  Grid // FIX: กลับมา import Grid ตัวดั้งเดิม
 } from '@mui/material';
-// FIX: Import the new Grid v2 component and rename it to Grid for convenience
-import Grid from '@mui/material/Unstable_Grid2';
 
 const IncidentReportPage: React.FC = () => {
   return (
@@ -23,11 +22,11 @@ const IncidentReportPage: React.FC = () => {
       </Typography>
 
       <Box component="form" noValidate autoComplete="off" sx={{ mt: 3 }}>
-        {/* This Grid container now works correctly with its children */}
+        {/* FIX: ใช้ Grid container เหมือนเดิม */}
         <Grid container spacing={3}>
 
-          {/* Each child Grid now uses the correct syntax for Grid v2 */}
-          <Grid xs={12} sm={6}>
+          {/* FIX: กลับมาใช้ синтаксис ของ Grid v1 คือต้องมี 'item' prop */}
+          <Grid item xs={12} sm={6}>
             <TextField
               select
               required
@@ -44,7 +43,7 @@ const IncidentReportPage: React.FC = () => {
             </TextField>
           </Grid>
 
-          <Grid xs={12} sm={6}>
+          <Grid item xs={12} sm={6}>
             <TextField
               required
               fullWidth
@@ -54,7 +53,7 @@ const IncidentReportPage: React.FC = () => {
             />
           </Grid>
 
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <TextField
               required
               fullWidth
@@ -65,8 +64,8 @@ const IncidentReportPage: React.FC = () => {
               label="Description of Incident"
             />
           </Grid>
-
-          <Grid xs={12} sm={6}>
+          
+          <Grid item xs={12} sm={6}>
             <TextField
               required
               fullWidth
@@ -79,7 +78,7 @@ const IncidentReportPage: React.FC = () => {
             />
           </Grid>
 
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <Button
               type="submit"
               variant="contained"
