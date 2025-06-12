@@ -1,16 +1,10 @@
 // src/pages/IncidentReportPage.tsx
 
 import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  MenuItem,
-  Grid // Using the stable Grid import
-} from '@mui/material';
+import { Box, Typography, TextField, Button, Paper, MenuItem, Grid } from '@mui/material';
+import { supabase } from '../supabaseClient'; // 1. นำเข้า supabase client
 
+// ... interface IFormData (เหมือนเดิม) ...
 interface IFormData {
   incidentType: string;
   location: string;
@@ -19,99 +13,49 @@ interface IFormData {
 }
 
 const IncidentReportPage: React.FC = () => {
-  const [formData, setFormData] = useState<IFormData>({
-    incidentType: '',
-    location: '',
-    description: '',
-    incidentDateTime: ''
-  });
+  const [formData, setFormData] = useState<IFormData>({ /* ... */ });
+  const [isSubmitting, setIsSubmitting] = useState(false); // State สำหรับควบคุมปุ่มตอนกำลังส่งข้อมูล
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => { /* ...เหมือนเดิม... */ };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); 
-    console.log("Form Submitted Data:", formData);
-    alert('Report Submitted! Check the console for the data.');
+  // 2. ปรับ handleSubmit ให้เป็น async และเพิ่มการเชื่อมต่อ Supabase
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true); // เริ่มกระบวนการส่งข้อมูล
+
+    // เตรียมข้อมูลที่จะส่ง ให้ชื่อ key ตรงกับชื่อ column ในตาราง
+    const submissionData = {
+      incident_type: formData.incidentType,
+      location: formData.location,
+      description: formData.description,
+      incident_date_time: formData.incidentDateTime,
+    };
+
+    try {
+      const { error } = await supabase
+        .from('incidents') // เลือกตาราง 'incidents'
+        .insert([submissionData]); // เพิ่มข้อมูลใหม่
+
+      if (error) {
+        throw error;
+      }
+
+      alert('Incident report submitted successfully!');
+      // อาจจะเคลียร์ฟอร์มหรือเปลี่ยนหน้าไปที่อื่นหลังจากส่งสำเร็จ
+    } catch (error: any) {
+      alert(`Error submitting report: ${error.message}`);
+    } finally {
+      setIsSubmitting(false); // สิ้นสุดกระบวนการส่งข้อมูล
+    }
   };
 
   return (
     <Paper elevation={3} sx={{ p: 4, maxWidth: 800, margin: 'auto' }}>
-      <Typography variant="h4" gutterBottom>
-        New Incident Report
-      </Typography>
-      <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-        Please fill out the details of the incident below.
-      </Typography>
-
-      <Box component="form" noValidate autoComplete="off" sx={{ mt: 3 }} onSubmit={handleSubmit}>
+      {/* ...ส่วน UI เหมือนเดิมทั้งหมด... */}
+      {/* แค่เพิ่ม disabled ให้ปุ่มตอนกำลังส่งข้อมูล */}
+      <Box component="form" /* ... */ onSubmit={handleSubmit}>
         <Grid container spacing={3}>
-
-          {/* This Grid item now takes up the full width on all screen sizes */}
-          <Grid item xs={12}>
-            <TextField
-              select
-              required
-              fullWidth
-              id="incident-type"
-              name="incidentType"
-              label="Type of Incident"
-              value={formData.incidentType}
-              onChange={handleChange}
-            >
-              <MenuItem value="Injury">Injury</MenuItem>
-              <MenuItem value="Near Miss">Near Miss</MenuItem>
-              <MenuItem value="Property Damage">Property Damage</MenuItem>
-              <MenuItem value="Hazardous Condition">Hazardous Condition</MenuItem>
-            </TextField>
-          </Grid>
-
-          {/* This Grid item also takes the full width */}
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              id="location"
-              name="location"
-              label="Location of Incident"
-              value={formData.location}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              multiline
-              rows={4}
-              id="description"
-              name="description"
-              label="Description of Incident"
-              value={formData.description}
-              onChange={handleChange}
-            />
-          </Grid>
-          
-          <Grid item xs={12}>
-            <TextField
-              required
-              fullWidth
-              id="datetime-local"
-              name="incidentDateTime"
-              label="Date and Time of Incident"
-              type="datetime-local"
-              value={formData.incidentDateTime}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-
+          {/* ...TextFields ทั้งหมดเหมือนเดิม... */}
           <Grid item xs={12}>
             <Button
               type="submit"
@@ -119,8 +63,9 @@ const IncidentReportPage: React.FC = () => {
               color="primary"
               size="large"
               sx={{ mt: 2 }}
+              disabled={isSubmitting} // 3. ทำให้ปุ่มกดไม่ได้ตอนกำลังส่งข้อมูล
             >
-              Submit Report
+              {isSubmitting ? 'Submitting...' : 'Submit Report'}
             </Button>
           </Grid>
         </Grid>
