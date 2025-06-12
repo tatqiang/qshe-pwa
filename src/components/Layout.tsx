@@ -19,6 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SummarizeIcon from '@mui/icons-material/Summarize'; // เปลี่ยนไอคอนให้สื่อถึง Report
 // --- จบส่วนที่เพิ่มเข้ามา ---
+import { Link } from 'react-router-dom'; // 1. Import Link
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -70,31 +71,35 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
         }}
       >
-        <Toolbar /> {/* เพิ่ม Toolbar ว่างๆ เพื่อให้เนื้อหาใน Drawer ไม่ถูก AppBar บัง */}
+          <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
           <List>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <DashboardIcon />
-                </ListItemIcon>
-                <ListItemText primary="Dashboard" />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <SummarizeIcon />
-                </ListItemIcon>
-                <ListItemText primary="Incident Report" />
-              </ListItemButton>
-            </ListItem>
-            {/* ในอนาคตเราจะเพิ่มเมนูอื่นๆ ที่นี่ เช่น Inspections, PTW */}
+            {/* 2. Update List Items to use Link */}
+            <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <DashboardIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Dashboard" />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+
+            <Link to="/incident-report" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <SummarizeIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Incident Report" />
+                </ListItemButton>
+              </ListItem>
+            </Link>
           </List>
         </Box>
       </Drawer>
       
-      {/* ส่วนของเนื้อหาหลัก (เหมือนเดิม) */}
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar /> 
         {children}
