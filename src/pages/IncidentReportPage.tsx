@@ -8,10 +8,9 @@ import {
   Button,
   Paper,
   MenuItem,
-  Grid
+  Grid // Using the stable Grid import
 } from '@mui/material';
 
-// ... interface IFormData (เหมือนเดิม) ...
 interface IFormData {
   incidentType: string;
   location: string;
@@ -53,7 +52,7 @@ const IncidentReportPage: React.FC = () => {
       <Box component="form" noValidate autoComplete="off" sx={{ mt: 3 }} onSubmit={handleSubmit}>
         <Grid container spacing={3}>
 
-          {/* FIX: เอา sm={6} ออก ให้เหลือแค่ xs={12} เพื่อให้เต็มความกว้างเสมอ */}
+          {/* This Grid item now takes up the full width on all screen sizes */}
           <Grid item xs={12}>
             <TextField
               select
@@ -72,7 +71,7 @@ const IncidentReportPage: React.FC = () => {
             </TextField>
           </Grid>
 
-          {/* FIX: เอา sm={6} ออก */}
+          {/* This Grid item also takes the full width */}
           <Grid item xs={12}>
             <TextField
               required
@@ -99,7 +98,6 @@ const IncidentReportPage: React.FC = () => {
             />
           </Grid>
           
-          {/* FIX: เอา sm={6} ออก */}
           <Grid item xs={12}>
             <TextField
               required
