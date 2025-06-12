@@ -1,6 +1,6 @@
 // src/pages/IncidentReportPage.tsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -8,10 +8,39 @@ import {
   Button,
   Paper,
   MenuItem,
-  Grid // <<<<<<< กลับมา import Grid ตัวดั้งเดิมที่เสถียร
+  Grid
 } from '@mui/material';
 
+// ... interface IFormData (เหมือนเดิม) ...
+interface IFormData {
+  incidentType: string;
+  location: string;
+  description: string;
+  incidentDateTime: string;
+}
+
 const IncidentReportPage: React.FC = () => {
+  const [formData, setFormData] = useState<IFormData>({
+    incidentType: '',
+    location: '',
+    description: '',
+    incidentDateTime: ''
+  });
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); 
+    console.log("Form Submitted Data:", formData);
+    alert('Report Submitted! Check the console for the data.');
+  };
+
   return (
     <Paper elevation={3} sx={{ p: 4, maxWidth: 800, margin: 'auto' }}>
       <Typography variant="h4" gutterBottom>
@@ -21,15 +50,11 @@ const IncidentReportPage: React.FC = () => {
         Please fill out the details of the incident below.
       </Typography>
 
-      <Box component="form" noValidate autoComplete="off" sx={{ mt: 3 }}>
-        {/* ใช้ Grid container เหมือนเดิม */}
+      <Box component="form" noValidate autoComplete="off" sx={{ mt: 3 }} onSubmit={handleSubmit}>
         <Grid container spacing={3}>
 
-          {/* !!!! จุดแก้ไขที่สำคัญที่สุด !!!!
-            เราจะกลับมาใช้ синтаксис แบบดั้งเดิม คือการใส่ prop 'item' เข้าไป
-            เพื่อให้เข้ากับ Grid ที่เรา import เข้ามา
-          */}
-          <Grid item xs={12} sm={6}>
+          {/* FIX: เอา sm={6} ออก ให้เหลือแค่ xs={12} เพื่อให้เต็มความกว้างเสมอ */}
+          <Grid item xs={12}>
             <TextField
               select
               required
@@ -37,7 +62,8 @@ const IncidentReportPage: React.FC = () => {
               id="incident-type"
               name="incidentType"
               label="Type of Incident"
-              defaultValue=""
+              value={formData.incidentType}
+              onChange={handleChange}
             >
               <MenuItem value="Injury">Injury</MenuItem>
               <MenuItem value="Near Miss">Near Miss</MenuItem>
@@ -46,13 +72,16 @@ const IncidentReportPage: React.FC = () => {
             </TextField>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          {/* FIX: เอา sm={6} ออก */}
+          <Grid item xs={12}>
             <TextField
               required
               fullWidth
               id="location"
               name="location"
               label="Location of Incident"
+              value={formData.location}
+              onChange={handleChange}
             />
           </Grid>
 
@@ -65,19 +94,23 @@ const IncidentReportPage: React.FC = () => {
               id="description"
               name="description"
               label="Description of Incident"
+              value={formData.description}
+              onChange={handleChange}
             />
           </Grid>
           
-          <Grid item xs={12} sm={6}>
+          {/* FIX: เอา sm={6} ออก */}
+          <Grid item xs={12}>
             <TextField
               required
               fullWidth
               id="datetime-local"
+              name="incidentDateTime"
               label="Date and Time of Incident"
               type="datetime-local"
-              InputLabelProps={{
-                shrink: true,
-              }}
+              value={formData.incidentDateTime}
+              onChange={handleChange}
+              InputLabelProps={{ shrink: true }}
             />
           </Grid>
 
