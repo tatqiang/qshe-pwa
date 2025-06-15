@@ -65,3 +65,43 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   )
 }
+
+
+// src/contexts/AuthContext.js
+
+// ... (โค้ดเดิม) ...
+
+export function AuthProvider({ children }) {
+  // ... (โค้ด useState, useEffect เดิม) ...
+
+  const signUp = (email, password, firstName, lastName) => {
+    // ... (โค้ด signUp เดิม) ...
+  };
+
+  // ---------------- vvvv ADD THIS vvvv ------------------
+  const signInWithPassword = (email, password) => {
+    return supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+  };
+
+  const signOut = () => {
+    return supabase.auth.signOut();
+  };
+  // ---------------- ^^^^ ADD THIS ^^^^ ------------------
+
+  const value = {
+    signUp,
+    signInWithPassword, // <-- เพิ่ม
+    signOut,            // <-- เพิ่ม
+    user,
+    session,
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+}
