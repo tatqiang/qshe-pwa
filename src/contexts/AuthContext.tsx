@@ -1,0 +1,82 @@
+// src/contexts/AuthContext.tsx
+import React, { useContext, useState, useEffect, createContext, ReactNode } from 'react';
+import { supabase } from '../lib/supabaseClient';
+import { Session, User } from '@supabase/supabase-js';
+
+// 1. สร้าง Interface สำหรับค่าที่จะส่งผ่าน Context
+interface AuthContextType {
+  user: User | null;
+  session: Session | null;
+  signUp: (/*...args...*/) => Promise<any>; // ควรระบุ Type ของ args และ return ให้ชัดเจนขึ้น
+  signInWithPassword: (email: string, password: string) => Promise<any>;
+  signOut: () => Promise<any>;
+}
+
+// 2. สร้าง Context ด้วย Type ที่กำหนดและค่าเริ่มต้นเป็น undefined
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
+
+// 3. กำหนด Type ของ props สำหรับ Provider
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // ฟังก์ชันต่างๆ ยังคงเหมือนเดิม แต่ระบบ Type จะช่วยตรวจสอบการเรียกใช้งาน
+  const signUp = (email: string, password: string, firstName: string, lastName: string) => {
+    return supabase.auth.signUp({ email, password, options: { data: { first_name: firstName, last_name: lastName } } });
+  };
+
+  const signInWithPassword = (email: string, password: string) => {
+    return supabase.auth.signInWithPassword({ email, password });
+  };
+
+  const signOut = () => {
+    return supabase.auth.signOut();
+  };
+
+  const value: AuthContextType = {
+    signUp,
+    signInWithPassword,
+    signOut,
+    user,
+    session,
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+}
