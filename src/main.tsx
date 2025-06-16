@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import DashboardPage from './pages/DashboardPage.tsx';
-import IncidentReportPage from './pages/IncidentReportPage.tsx';
+import DashboardPage from './pages/Dashboard.tsx';
+import IncidentReportPage from './pages/IncidentReport.tsx';
 
 // These imports are already correct in your file
 import { LocalizationProvider } from '@mui/x-date-pickers';

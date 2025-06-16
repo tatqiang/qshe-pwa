@@ -13,7 +13,7 @@ import {
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 // Import Dayjs for type definition
 import { Dayjs } from 'dayjs';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../lib/supabaseClient';
 
 // 2. Update the interface to use Dayjs
 interface IFormData {

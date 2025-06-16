@@ -10,8 +10,9 @@ import ProtectedRoute from './ProtectedRoute'; // อยู่ในโฟลเ
 import { useAuth } from '../contexts/AuthContext';
 import Dashboard from '../pages/Dashboard';
 import IncidentReport from '../pages/IncidentReport';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
+import Login from '../pages/Login'; // อันนี้อาจจะถูกแล้ว
+import Register from '../pages/Register'; // เราจะเปลี่ยนเป็น .tsx ต่อ
+
 
 const drawerWidth = 240;
 
