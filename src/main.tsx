@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 
 // Providers
 import { AuthProvider } from './contexts/AuthContext';
@@ -15,6 +16,8 @@ import LoginPage from './pages/Login.tsx';
 import RegisterPage from './pages/Register.tsx';
 import DashboardPage from './pages/Dashboard.tsx';
 import IncidentReportPage from './pages/IncidentReport.tsx';
+
+const theme = createTheme();
 
 const router = createBrowserRouter([
   {
