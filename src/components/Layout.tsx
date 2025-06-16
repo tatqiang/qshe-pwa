@@ -1,6 +1,6 @@
 // src/components/Layout.tsx
 import React from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Outlet, Route, useNavigate } from 'react-router-dom';
 import { Box, Drawer, AppBar, Toolbar, List, Typography, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ReportIcon from '@mui/icons-material/Assignment';
@@ -83,13 +83,14 @@ const Layout: React.FC = () => {
       
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         {!user && <Toolbar />}
-        <Routes>
+        {/* <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/incident-report" element={<ProtectedRoute><IncidentReport /></ProtectedRoute>} />
-        </Routes>
+        </Routes> */}
+        <Outlet/>
       </Box>
     </Box>
   );
