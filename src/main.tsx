@@ -4,28 +4,25 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-// --- Providers (ครอบที่นี่!) ---
+// Providers
 import { AuthProvider } from './contexts/AuthContext';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-// --- Pages and Layout Components ---
-import App from './App.tsx'; // App จะทำหน้าที่เป็น "กรอบ" ของหน้าที่ต้อง Login
+// Pages and Layout Components
+import App from './App.tsx';
 import LoginPage from './pages/Login.tsx';
 import RegisterPage from './pages/Register.tsx';
 import DashboardPage from './pages/Dashboard.tsx';
 import IncidentReportPage from './pages/IncidentReport.tsx';
 
-
-// --- สร้างแผนที่ของแอป (Router) ---
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />, // ถ้าเข้า path ที่ขึ้นต้นด้วย / ให้ใช้ App เป็นกรอบ
+    element: <App />, // App คือ "ยามเฝ้าประตู" สำหรับหน้าส่วนตัว
     children: [
-      // หน้าลูกๆ ที่จะแสดงในกรอบของ App
       {
-        index: true, // ถ้าเป็น path "/" เฉยๆ ให้แสดง Dashboard
+        index: true,
         element: <DashboardPage />,
       },
       {
@@ -34,7 +31,7 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // --- หน้านอกกรอบ (หน้าที่ไม่ต้อง Login) ---
+  // หน้าสาธารณะ (Public Routes)
   {
     path: "/login",
     element: <LoginPage />,
@@ -45,10 +42,8 @@ const router = createBrowserRouter([
   },
 ]);
 
-// --- Render แอปพลิเคชัน ---
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    {/* AuthProvider จะครอบ RouterProvider อีกที */}
     <AuthProvider>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <RouterProvider router={router} />
