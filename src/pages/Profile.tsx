@@ -116,7 +116,4 @@ function ProfilePage() {
     );
 }
 
-// --- FIX IS HERE ---
-// Add the missing default export statement at the end of the file.
 export default ProfilePage;
-// --------------------
