@@ -26,10 +26,10 @@ function RegisterPage() {
         return;
     }
     
-    const { firstName, lastName, email, password, avatarFile, faceImage } = formData;
+    const { firstName, lastName, email, password, faceImage } = formData;
 
-    if (!avatarFile || !faceImage) {
-      setError("Please upload a profile picture and capture your face.");
+    if (!faceImage) {
+      setError("Please capture a profile and verification photo.");
       return;
     }
     
@@ -49,12 +49,12 @@ function RegisterPage() {
 
       const userId = authData.user.id;
       
-      const avatarFileName = `${userId}/${uuidv4()}`;
-      await supabase.storage.from('avatars').upload(avatarFileName, avatarFile);
-      
-      const faceImageFile = await dataUrlToFile(faceImage, 'face-verification.jpg');
+      const faceImageFile = await dataUrlToFile(faceImage, 'profile-and-verification.jpg');
       const faceFileName = `${userId}/${uuidv4()}`;
-      await supabase.storage.from('face.verification').upload(faceFileName, faceImageFile);
+
+      // Upload the single image to both buckets
+      await supabase.storage.from('avatars').upload(faceFileName, faceImageFile, { upsert: true });
+      await supabase.storage.from('face.verification').upload(faceFileName, faceImageFile, { upsert: true });
 
       setSuccess('Registration Successful! Please check your email to verify your account.');
       setTimeout(() => navigate('/login'), 3000);

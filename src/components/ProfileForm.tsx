@@ -8,8 +8,9 @@ import {
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import SwitchCameraIcon from '@mui/icons-material/SwitchCamera';
 import Webcam from 'react-webcam';
-import { ProfileType } from '../contexts/AuthContext';
+import { ProfileType } from '../contexts/AuthContext'; // Import types
 
+// Define the props this component will accept
 interface ProfileFormProps {
   mode: 'register' | 'edit';
   initialProfile?: ProfileType | null;
@@ -43,7 +44,6 @@ export function ProfileForm({
   useEffect(() => {
     setFirstName(initialProfile?.first_name || '');
     setLastName(initialProfile?.last_name || '');
-    // The faceImage is now the source for the avatar preview
     setFaceImage(initialProfile?.avatar_url || null);
     setEmail(initialEmail || '');
   }, [initialProfile, initialEmail]);
@@ -70,11 +70,21 @@ export function ProfileForm({
   return (
     <Box component="form" onSubmit={handleSubmit}>
       <Grid container spacing={4}>
-        {/* Left Column: Image Capture */}
-        <Grid item xs={12} md={5}>
-          {/* Apply flexbox for centering */}
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <Card sx={{ width: '100%' }}>
+        {/* --- FIX STARTS HERE --- */}
+        {/* Left Column: Image Capture. Apply flex properties directly to the Grid item. */}
+        <Grid 
+          item 
+          xs={12} 
+          md={5}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center', // This will center the cards horizontally
+            gap: 2 // This adds space between the cards
+          }}
+        >
+        {/* --- FIX ENDS HERE --- */}
+            <Card sx={{ width: '100%', p: 1 }}>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Typography variant="h6" gutterBottom>
                   {mode === 'register' ? 'Profile & Verification Photo' : 'Update Photo'}
@@ -87,10 +97,9 @@ export function ProfileForm({
                       ref={webcamRef}
                       screenshotFormat="image/jpeg"
                       width="100%"
-                      videoConstraints={{ facingMode }} // Use state for camera direction
+                      videoConstraints={{ facingMode }}
                     />
                   )}
-                  {/* Show placeholder if no image and webcam is off */}
                   {!faceImage && !showWebcam && <Typography sx={{p: 5}}>Camera Preview</Typography>}
                 </Box>
               </CardContent>
@@ -109,7 +118,6 @@ export function ProfileForm({
                 )}
               </CardActions>
             </Card>
-          </Box>
         </Grid>
 
         {/* Right Column: User Details */}
