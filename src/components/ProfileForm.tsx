@@ -2,15 +2,13 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Box, Grid, TextField, Button, Avatar, Card, CardContent, 
-  CardActions, Typography, IconButton, Divider, Switch, FormControlLabel
+  Box, TextField, Button, Avatar, Card, CardContent, 
+  CardActions, Typography, Divider, Switch, FormControlLabel, Grid
 } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import SwitchCameraIcon from '@mui/icons-material/SwitchCamera';
 import Webcam from 'react-webcam';
-import { ProfileType } from '../contexts/AuthContext'; // Import types
+import type { ProfileType } from '../contexts/AuthContext'; // FIX: Use type-only import
 
-// Define the props this component will accept
 interface ProfileFormProps {
   mode: 'register' | 'edit';
   initialProfile?: ProfileType | null;
@@ -23,24 +21,20 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ 
-  mode, initialProfile, initialEmail, onSubmit, onCancel, loading, error 
+  mode, initialProfile, initialEmail, onSubmit, onCancel, loading, 
 }: ProfileFormProps) {
   
   const webcamRef = useRef<Webcam>(null);
 
-  // Form data state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
-  // Image and Camera State
   const [faceImage, setFaceImage] = useState<string | null>(null);
   const [showWebcam, setShowWebcam] = useState(false);
-  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user'); // For camera switch
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
 
-  // Sync state with initial data on load
   useEffect(() => {
     setFirstName(initialProfile?.first_name || '');
     setLastName(initialProfile?.last_name || '');
@@ -69,49 +63,46 @@ export function ProfileForm({
 
   return (
     <Box component="form" onSubmit={handleSubmit}>
-      {/* --- FIX STARTS HERE: Replaced Grid with Box for layout --- */}
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4, mt: 2 }}>
-
-        {/* Left Column: Image Capture */}
-        <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-            <Card sx={{ width: '100%', maxWidth: '400px', p: 1 }}>
-                <CardContent sx={{ textAlign: 'center' }}>
-                  <Typography variant="h6" gutterBottom>
-                    {mode === 'register' ? 'Profile & Verification Photo' : 'Update Photo'}
-                  </Typography>
-                  <Avatar src={faceImage || ''} sx={{ width: 150, height: 150, margin: 'auto', mb: 2 }} />
-                   <Box sx={{ mt: 1, p: 1, border: '1px dashed grey', minHeight: 150, textAlign: 'center' }}>
-                    {showWebcam && (
-                      <Webcam
-                        audio={false}
-                        ref={webcamRef}
-                        screenshotFormat="image/jpeg"
-                        width="100%"
-                        videoConstraints={{ facingMode }}
-                      />
-                    )}
-                    {!faceImage && !showWebcam && <Typography sx={{p: 5}}>Camera Preview</Typography>}
-                  </Box>
-                </CardContent>
-                <CardActions sx={{ justifyContent: 'center', flexDirection: 'column' }}>
+      <Grid container spacing={4} sx={{ mt: 2 }}>
+        <Grid item xs={12} md={5} sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, width: '100%', maxWidth: '350px' }}>
+            <Card sx={{ width: '100%', p: 1 }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <Typography variant="h6" gutterBottom>
+                  {mode === 'register' ? 'Profile & Verification Photo' : 'Update Photo'}
+                </Typography>
+                <Avatar src={faceImage || ''} sx={{ width: 150, height: 150, margin: 'auto', mb: 2 }} />
+                <Box sx={{ mt: 1, p: 1, border: '1px dashed grey', minHeight: 150, textAlign: 'center' }}>
                   {showWebcam && (
-                    <FormControlLabel
-                        control={<Switch checked={facingMode === 'environment'} onChange={() => setFacingMode(prev => (prev === 'user' ? 'environment' : 'user'))} />}
-                        label="Switch to Rear Camera"
-                        sx={{mb: 1}}
-                      />
+                    <Webcam
+                      audio={false}
+                      ref={webcamRef}
+                      screenshotFormat="image/jpeg"
+                      width="100%"
+                      videoConstraints={{ facingMode }}
+                    />
                   )}
-                  {!showWebcam ? (
-                    <Button onClick={() => setShowWebcam(true)} startIcon={<PhotoCamera />}>Open Camera</Button>
-                  ) : (
-                    <Button onClick={captureFace} variant="contained">Take Photo</Button>
-                  )}
-                </CardActions>
+                  {!faceImage && !showWebcam && <Typography sx={{p: 5}}>Camera Preview</Typography>}
+                </Box>
+              </CardContent>
+              <CardActions sx={{ justifyContent: 'center', flexDirection: 'column' }}>
+                {showWebcam && (
+                  <FormControlLabel
+                    control={<Switch checked={facingMode === 'environment'} onChange={() => setFacingMode(prev => (prev === 'user' ? 'environment' : 'user'))} />}
+                    label="Switch to Rear Camera"
+                    sx={{mb: 1}}
+                  />
+                )}
+                {!showWebcam ? (
+                  <Button onClick={() => setShowWebcam(true)} startIcon={<PhotoCamera />}>Open Camera</Button>
+                ) : (
+                  <Button onClick={captureFace} variant="contained">Take Photo</Button>
+                )}
+              </CardActions>
             </Card>
-        </Box>
-
-        {/* Right Column: User Details */}
-        <Box sx={{ flex: 1.5 }}>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={7}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>User Details</Typography>
@@ -132,10 +123,8 @@ export function ProfileForm({
               </CardActions>
             )}
           </Card>
-        </Box>
-      </Box>
-      {/* --- FIX ENDS HERE --- */}
-      
+        </Grid>
+      </Grid>
       {mode === 'register' && (
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading}>
           Register
