@@ -70,54 +70,44 @@ export function ProfileForm({
   return (
     <Box component="form" onSubmit={handleSubmit}>
       <Grid container spacing={4}>
-        {/* --- FIX STARTS HERE --- */}
-        {/* Left Column: Image Capture. Apply flex properties directly to the Grid item. */}
-        <Grid 
-          item 
-          xs={12} 
-          md={5}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center', // This will center the cards horizontally
-            gap: 2 // This adds space between the cards
-          }}
-        >
-        {/* --- FIX ENDS HERE --- */}
-            <Card sx={{ width: '100%', p: 1 }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h6" gutterBottom>
-                  {mode === 'register' ? 'Profile & Verification Photo' : 'Update Photo'}
-                </Typography>
-                <Avatar src={faceImage || ''} sx={{ width: 150, height: 150, margin: 'auto', mb: 2 }} />
-                 <Box sx={{ mt: 1, p: 1, border: '1px dashed grey', minHeight: 150, textAlign: 'center' }}>
-                  {showWebcam && (
-                    <Webcam
-                      audio={false}
-                      ref={webcamRef}
-                      screenshotFormat="image/jpeg"
-                      width="100%"
-                      videoConstraints={{ facingMode }}
-                    />
-                  )}
-                  {!faceImage && !showWebcam && <Typography sx={{p: 5}}>Camera Preview</Typography>}
-                </Box>
-              </CardContent>
-              <CardActions sx={{ justifyContent: 'center', flexDirection: 'column' }}>
-                {showWebcam && (
-                  <FormControlLabel
-                      control={<Switch checked={facingMode === 'environment'} onChange={() => setFacingMode(prev => (prev === 'user' ? 'environment' : 'user'))} />}
-                      label="Switch to Rear Camera"
-                      sx={{mb: 1}}
-                    />
-                )}
-                {!showWebcam ? (
-                  <Button onClick={() => setShowWebcam(true)} startIcon={<PhotoCamera />}>Open Camera</Button>
-                ) : (
-                  <Button onClick={captureFace} variant="contained">Take Photo</Button>
-                )}
-              </CardActions>
-            </Card>
+        {/* Left Column: Image Capture */}
+        <Grid item xs={12} md={5} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, width: '100%', maxWidth: '350px' }}>
+              <Card sx={{ width: '100%', p: 1 }}>
+                  <CardContent sx={{ textAlign: 'center' }}>
+                    <Typography variant="h6" gutterBottom>
+                      {mode === 'register' ? 'Profile & Verification Photo' : 'Update Photo'}
+                    </Typography>
+                    <Avatar src={faceImage || ''} sx={{ width: 150, height: 150, margin: 'auto', mb: 2 }} />
+                     <Box sx={{ mt: 1, p: 1, border: '1px dashed grey', minHeight: 150, textAlign: 'center' }}>
+                      {showWebcam && (
+                        <Webcam
+                          audio={false}
+                          ref={webcamRef}
+                          screenshotFormat="image/jpeg"
+                          width="100%"
+                          videoConstraints={{ facingMode }}
+                        />
+                      )}
+                      {!faceImage && !showWebcam && <Typography sx={{p: 5}}>Camera Preview</Typography>}
+                    </Box>
+                  </CardContent>
+                  <CardActions sx={{ justifyContent: 'center', flexDirection: 'column' }}>
+                    {showWebcam && (
+                      <FormControlLabel
+                          control={<Switch checked={facingMode === 'environment'} onChange={() => setFacingMode(prev => (prev === 'user' ? 'environment' : 'user'))} />}
+                          label="Switch to Rear Camera"
+                          sx={{mb: 1}}
+                        />
+                    )}
+                    {!showWebcam ? (
+                      <Button onClick={() => setShowWebcam(true)} startIcon={<PhotoCamera />}>Open Camera</Button>
+                    ) : (
+                      <Button onClick={captureFace} variant="contained">Take Photo</Button>
+                    )}
+                  </CardActions>
+                </Card>
+            </Box>
         </Grid>
 
         {/* Right Column: User Details */}
