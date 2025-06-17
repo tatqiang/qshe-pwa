@@ -77,9 +77,9 @@ const router = createBrowserRouter([
         // This is the main application layout, doubly protected by the ProjectGuard.
         // A user MUST be logged in AND have a project selected to access these pages.
         path: "/",
-        element: <ProjectGuard />,
+        element: <ProjectGuard><Layout /></ProjectGuard>, // <-- ใช้ Layout ที่นี่
         children: [
-          // Redirect the root "/" path to "/dashboard"
+          // หน้าเหล่านี้จะถูก render เข้าไปใน <Outlet /> ของ Layout
           { index: true, element: <Navigate to="/dashboard" replace /> },
           { path: "dashboard", element: <DashboardPage /> },
           { path: "incident-report", element: <IncidentReportPage /> },
