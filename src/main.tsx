@@ -14,6 +14,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Layout from './components/Layout'; // Your main UI shell (Sidebar, Navbar etc.)
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
+import ProfilePage from './pages/Profile'; // Assuming you have a Profile page
 import DashboardPage from './pages/Dashboard';
 import IncidentReportPage from './pages/IncidentReport';
 import ProjectSelectPage from './pages/ProjectSelect'; // The new page
@@ -83,6 +84,7 @@ const router = createBrowserRouter([
           { index: true, element: <Navigate to="/dashboard" replace /> },
           { path: "dashboard", element: <DashboardPage /> },
           { path: "incident-report", element: <IncidentReportPage /> },
+          { path: "profile", element: <ProfilePage /> },
         ]
       },
     ]

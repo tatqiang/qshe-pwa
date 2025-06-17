@@ -1,44 +1,53 @@
 // src/components/Layout.tsx
 
+
 import React, { useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom'; // 1. Import useNavigate
-import { useAuth } from '../contexts/AuthContext'; // 2. Import useAuth
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 // Material-UI Components
 import {
   AppBar, Toolbar, IconButton, Typography, Drawer,
   List, ListItem, ListItemButton, ListItemIcon, ListItemText,
-  Box, CssBaseline, Divider
+  Box, CssBaseline, Divider, Avatar, Menu, MenuItem, Tooltip
 } from '@mui/material';
 
 // Icons
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import LogoutIcon from '@mui/icons-material/Logout'; // 3. Import ไอคอน Logout
+import LogoutIcon from '@mui/icons-material/Logout';
 
-const drawerWidth = 240;
+const drawerWidth = 240; // Define drawer width
 
 function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { signOut } = useAuth(); // 4. ดึงฟังก์ชัน signOut มาจาก Context
+  const { signOut, profile } = useAuth();
   const navigate = useNavigate();
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+  
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  // 5. สร้างฟังก์ชันสำหรับจัดการการ Logout
   const handleLogout = async () => {
+    handleCloseUserMenu();
     await signOut();
-    // หลังจาก signOut, AuthGuard ของเราจะทำงานและพาไปหน้า Login อัตโนมัติ
-    // แต่เราสามารถใช้ navigate เพื่อความแน่นอนก็ได้
-    navigate('/login'); 
+    navigate('/login', { replace: true });
   };
 
   const drawer = (
     <div>
       <Toolbar />
+      <Divider />
       <List>
         <ListItem disablePadding>
           <ListItemButton onClick={() => navigate('/dashboard')}>
@@ -53,9 +62,8 @@ function Layout() {
           </ListItemButton>
         </ListItem>
       </List>
-      <Divider /> {/* เพิ่มเส้นคั่นเมนู */}
+      <Divider />
       <List>
-        {/* 6. เพิ่มปุ่ม Logout เข้าไปในเมนู */}
         <ListItem disablePadding>
           <ListItemButton onClick={handleLogout}>
             <ListItemIcon><LogoutIcon /></ListItemIcon>
@@ -80,9 +88,34 @@ function Layout() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             QSHE Management
           </Typography>
+
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt={profile?.first_name || 'User'} src={profile?.avatar_url || ''} />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              keepMounted
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              <MenuItem onClick={() => { handleCloseUserMenu(); navigate('/profile'); }}>
+                <Typography textAlign="center">Profile</Typography>
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
+            </Menu>
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer

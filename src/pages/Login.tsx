@@ -32,6 +32,8 @@ function LoginPage() {
     try {
       const { error } = await signInWithPassword(email, password);
       if (error) throw error;
+      // Navigate to a generic protected route, letting the guards handle the rest.
+      navigate('/', { replace: true }); 
       // การ redirect จะถูกจัดการโดย Router ใน main.tsx โดยอัตโนมัติ
     } catch (err: any) {
       setError(err.message || 'Failed to log in');
