@@ -20,7 +20,7 @@ export default function LoginPage() {
       setLoading(true);
       const { error } = await signInWithPassword(email, password);
       if (error) throw error;
-      navigate('/dashboard');
+      navigate('/project-selection');
     } catch (err: any) {
       setError(err.message || 'Failed to log in');
     }

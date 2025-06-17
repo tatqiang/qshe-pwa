@@ -1,18 +1,27 @@
 // src/contexts/AuthContext.tsx
 import React, { useContext, useState, useEffect, createContext, ReactNode } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient'; // ตรวจสอบว่า path ถูกต้อง
 import { Session, User } from '@supabase/supabase-js';
 
-// 1. สร้าง Interface สำหรับค่าที่จะส่งผ่าน Context
+// --- เพิ่ม: 1. สร้าง Type สำหรับ Project ---
+// เราสามารถเพิ่มรายละเอียดได้ในอนาคต
+export interface ProjectType {
+  id: string;
+  name: string;
+  location?: string;
+}
+
+// --- แก้ไข: 2. เพิ่ม Project และ setProject เข้าไปใน Context Type ---
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  signUp: (/*...args...*/) => Promise<any>; // ควรระบุ Type ของ args และ return ให้ชัดเจนขึ้น
+  project: ProjectType | null; // <-- เพิ่ม state ของ project
+  setProject: (project: ProjectType | null) => void; // <-- เพิ่ม function สำหรับ set project
+  signUp: (email: string, password: string, firstName: string, lastName: string) => Promise<any>;
   signInWithPassword: (email: string, password: string) => Promise<any>;
   signOut: () => Promise<any>;
 }
 
-// 2. สร้าง Context ด้วย Type ที่กำหนดและค่าเริ่มต้นเป็น undefined
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function useAuth() {
@@ -23,7 +32,6 @@ export function useAuth() {
   return context;
 }
 
-// 3. กำหนด Type ของ props สำหรับ Provider
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -31,9 +39,12 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  // --- เพิ่ม: 3. สร้าง State สำหรับ Project ---
+  const [project, setProject] = useState<ProjectType | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // โค้ดส่วนนี้เหมือนเดิม
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -44,6 +55,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        // --- เพิ่ม: ถ้า user ออกจากระบบ ให้เคลียร์ project ด้วย ---
+        if (event === "SIGNED_OUT") {
+          setProject(null);
+        }
         setLoading(false);
       }
     );
@@ -52,8 +67,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       authListener.subscription.unsubscribe();
     };
   }, []);
-
-  // ฟังก์ชันต่างๆ ยังคงเหมือนเดิม แต่ระบบ Type จะช่วยตรวจสอบการเรียกใช้งาน
+  
+  // ฟังก์ชันเดิม
   const signUp = (email: string, password: string, firstName: string, lastName: string) => {
     return supabase.auth.signUp({ email, password, options: { data: { first_name: firstName, last_name: lastName } } });
   };
@@ -65,13 +80,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signOut = () => {
     return supabase.auth.signOut();
   };
-
+  
+  // --- แก้ไข: 4. เพิ่ม project และ setProject เข้าไปใน value ---
   const value: AuthContextType = {
     signUp,
     signInWithPassword,
     signOut,
     user,
     session,
+    project, // <-- ส่ง project state ออกไป
+    setProject, // <-- ส่ง function setProject ออกไป
   };
 
   return (
